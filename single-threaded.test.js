@@ -1,4 +1,4 @@
-function SmallestTasks(compare) {
+function Heap(compare) {
   const state = [];
 
   const parent = (e) => {
@@ -58,7 +58,7 @@ function SmallestTasks(compare) {
   };
 }
 
-const getResult = (tasks, t, result = []) => {
+const getOrder = function (tasks) {
   const sortedTasks = tasks
     .map((n, i) => {
       return {
@@ -68,11 +68,10 @@ const getResult = (tasks, t, result = []) => {
       };
     })
     .sort((a, b) => {
-      return a.start - b.start;
+      return b.start - a.start;
     });
 
-  let available = new SmallestTasks((parent, e) => {
-    console.log(`comparing parent ${parent.duration}, with e ${e.duration}`);
+  const heap = new Heap((parent, e) => {
     // return true = swap
     if (e.duration < parent.duration) {
       return true;
@@ -82,31 +81,28 @@ const getResult = (tasks, t, result = []) => {
     }
     return false;
   });
-  while (result.length !== tasks.length) {
-    if (
+
+  let curTime = sortedTasks[sortedTasks.length - 1][0];
+  const result = [];
+
+  while (heap.getSize() || sortedTasks.length) {
+    while (
       sortedTasks.length &&
-      !available.getSize() &&
-      t < sortedTasks[0].start
+      curTime >= sortedTasks[sortedTasks.length - 1].start
     ) {
-      t = sortedTasks[0].start;
+      heap.add(sortedTasks.pop());
     }
-    while (sortedTasks.length && sortedTasks[0].start <= t) {
-      available.add(sortedTasks.shift());
+    if (heap.getSize()) {
+      const minTask = heap.getSmallest();
+      curTime += minTask.duration;
+      result.push(minTask.idx);
+    } else {
+      if (sortedTasks.length) {
+        curTime = sortedTasks[sortedTasks.length - 1].start;
+      }
     }
-
-    const smallestTask = available.getSmallest();
-    console.log(
-      `smallestTask is ${smallestTask.start}, ${smallestTask.duration}, at ${t}`
-    );
-
-    result.push(smallestTask.idx);
-    t = t + smallestTask.duration;
   }
   return result;
-};
-
-const getOrder = function (tasks, result = []) {
-  return getResult(tasks, 0);
 };
 
 test("loooongeinput", () => {
