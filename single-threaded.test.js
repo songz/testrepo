@@ -1,4 +1,4 @@
-function Heap(tasks) {
+const getResult = (tasks, t, result = []) => {
   const sortedTasks = tasks
     .map((n, i) => {
       return {
@@ -11,34 +11,15 @@ function Heap(tasks) {
       return a.start - b.start;
     });
 
-  console.log(sortedTasks);
-
-  this.getAvailable = (time, result = [], i = 0) => {
-    if (
-      i === 0 &&
-      sortedTasks.length &&
-      !result.length &&
-      time < sortedTasks[0].start
-    ) {
-      time = sortedTasks[i].start;
-    }
-    while (sortedTasks.length && sortedTasks[0].start <= time) {
-      result.push(sortedTasks.shift());
-    }
-    return { result, time };
-  };
-
-  this.delete = (element) => {
-    const toDelete = sortedTasks.indexOf(element);
-    sortedTasks.splice(toDelete, 1);
-  };
-}
-
-const getResult = (tasks, h, t, result = []) => {
   let available = [];
   while (result.length !== tasks.length) {
-    const availableResults = h.getAvailable(t, available);
-    t = availableResults.time;
+    if (sortedTasks.length && !available.length && t < sortedTasks[0].start) {
+      t = sortedTasks[0].start;
+    }
+    while (sortedTasks.length && sortedTasks[0].start <= t) {
+      available.push(sortedTasks.shift());
+    }
+
     let smallestTaskIdx = 0;
     const smallestTask = available.reduce((acc, task, idx) => {
       if (acc.duration < task.duration) {
@@ -65,8 +46,7 @@ const getResult = (tasks, h, t, result = []) => {
 };
 
 const getOrder = function (tasks, result = []) {
-  const h = new Heap(tasks);
-  return getResult(tasks, h, 0);
+  return getResult(tasks, 0);
 };
 
 test("loooongeinput", () => {
