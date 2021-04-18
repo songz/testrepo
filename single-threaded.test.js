@@ -82,7 +82,7 @@ const getOrder = function (tasks) {
     return false;
   });
 
-  let curTime = sortedTasks[sortedTasks.length - 1][0];
+  let curTime = sortedTasks[sortedTasks.length - 1].start;
   const result = [];
 
   while (heap.getSize() || sortedTasks.length) {
