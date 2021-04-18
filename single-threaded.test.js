@@ -1,33 +1,60 @@
-function SmallestTasks() {
-  const tasks = [];
+function SmallestTasks(compare) {
+  const state = [];
 
-  this.getSize = () => {
-    return tasks.length;
+  const parent = (e) => {
+    return Math.floor((e - 1) / 2);
   };
 
-  this.add = (task) => {
-    tasks.push(task);
+  const leftChild = (i) => {
+    return 2 * i + 1;
+  };
+
+  const rightChild = (i) => {
+    return leftChild(i) + 1;
+  };
+
+  this.add = function (element) {
+    state.push(element);
+    if (state.length === 1) {
+      return;
+    }
+    let i = state.length - 1;
+    while (i > 0 && compare(state[parent(i)], state[i])) {
+      [state[i], state[parent(i)]] = [state[parent(i)], state[i]];
+      i = parent(i);
+    }
+  };
+
+  this.getSize = () => {
+    return state.length;
   };
 
   this.getSmallest = () => {
-    let smallestTaskIdx = 0;
-    const smallestTask = tasks.reduce((acc, task, idx) => {
-      if (acc.duration < task.duration) {
-        return acc;
+    if (!state.length) return null;
+    if (state.length === 1) {
+      return state.pop();
+    }
+    const result = state[0];
+    state[0] = state[state.length - 1];
+    state.pop();
+    let i = 0;
+    while (
+      (leftChild(i) < state.length && compare(state[i], state[leftChild(i)])) ||
+      (rightChild(i) < state.length && compare(state[i], state[rightChild(i)]))
+    ) {
+      if (
+        rightChild(i) < state.length &&
+        compare(state[i], state[rightChild(i)]) &&
+        compare(state[leftChild(i)], state[rightChild(i)])
+      ) {
+        [state[i], state[rightChild(i)]] = [state[rightChild(i)], state[i]];
+        i = rightChild(i);
+      } else {
+        [state[i], state[leftChild(i)]] = [state[leftChild(i)], state[i]];
+        i = leftChild(i);
       }
-      if (acc.duration === task.duration) {
-        if (acc.idx < task.idx) {
-          return acc;
-        }
-        smallestTaskIdx = idx;
-        return task;
-      }
-      smallestTaskIdx = idx;
-      return task;
-    }, tasks[0]);
-    tasks.splice(smallestTaskIdx, 1);
-    return smallestTask;
-    //console.log(`available length: ${available.length}`);
+    }
+    return result;
   };
 }
 
@@ -44,7 +71,17 @@ const getResult = (tasks, t, result = []) => {
       return a.start - b.start;
     });
 
-  let available = new SmallestTasks();
+  let available = new SmallestTasks((parent, e) => {
+    console.log(`comparing parent ${parent.duration}, with e ${e.duration}`);
+    // return true = swap
+    if (e.duration < parent.duration) {
+      return true;
+    }
+    if (parent.duration === e.duration) {
+      return e.idx < parent.idx;
+    }
+    return false;
+  });
   while (result.length !== tasks.length) {
     if (
       sortedTasks.length &&
@@ -58,10 +95,12 @@ const getResult = (tasks, t, result = []) => {
     }
 
     const smallestTask = available.getSmallest();
+    console.log(
+      `smallestTask is ${smallestTask.start}, ${smallestTask.duration}, at ${t}`
+    );
 
     result.push(smallestTask.idx);
     t = t + smallestTask.duration;
-    //console.log(`done with task ${smallestTask.idx}, time: ${t}`);
   }
   return result;
 };
