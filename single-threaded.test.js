@@ -15,11 +15,11 @@ function Heap(tasks) {
     if (i === 0 && time < sortedTasks[i].start) {
       time = sortedTasks[i].start;
     }
-    if (i >= sortedTasks.length || time < sortedTasks[i].start) {
-      return { result, time };
+    while (!(i >= sortedTasks.length || time < sortedTasks[i].start)) {
+      result.push(sortedTasks[i]);
+      i = i + 1;
     }
-    result.push(sortedTasks[i]);
-    return this.getAvailable(time, result, i + 1);
+    return { result, time };
   };
 
   this.delete = (element) => {
@@ -29,26 +29,25 @@ function Heap(tasks) {
 }
 
 const getResult = (tasks, h, t, result = []) => {
-  if (result.length === tasks.length) {
-    return result;
+  while (result.length !== tasks.length) {
+    const availableResults = h.getAvailable(t);
+    const available = availableResults.result;
+    t = availableResults.time;
+    const smallestTask = available.reduce((acc, task) => {
+      if (acc.duration < task.duration) {
+        return acc;
+      }
+      if (acc.duration === task.duration) {
+        return acc.idx < task.idx ? acc : task;
+      }
+      return task;
+    }, available[0]);
+    console.log(`available length: ${available.length}`);
+    result.push(smallestTask.idx);
+    h.delete(smallestTask);
+    t = t + smallestTask.duration;
   }
-  const availableResults = h.getAvailable(t);
-  const available = availableResults.result;
-  t = availableResults.time;
-  const sortedByDuration = available.sort((a, b) => {
-    const diff = a.duration - b.duration;
-    return diff;
-  });
-  const sortedAvailable = sortedByDuration
-    .filter((d) => d.duration === sortedByDuration[0].duration)
-    .sort((a, b) => {
-      return a.idx - b.idx;
-    });
-  console.log(sortedAvailable);
-  result.push(sortedAvailable[0].idx);
-  h.delete(sortedAvailable[0]);
-  //console.log(`time ${t}`, JSON.stringify(result, null, 2));
-  return getResult(tasks, h, t + sortedAvailable[0].duration, result);
+  return result;
 };
 
 const getOrder = function (tasks, result = []) {
