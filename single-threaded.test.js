@@ -39,23 +39,24 @@ const getResult = (tasks, h, t, result = []) => {
   while (result.length !== tasks.length) {
     const availableResults = h.getAvailable(t, available);
     t = availableResults.time;
-    const smallestTask = available.reduce((acc, task) => {
+    let smallestTaskIdx = 0;
+    const smallestTask = available.reduce((acc, task, idx) => {
       if (acc.duration < task.duration) {
         return acc;
       }
       if (acc.duration === task.duration) {
-        return acc.idx < task.idx ? acc : task;
+        if (acc.idx < task.idx) {
+          return acc;
+        }
+        smallestTaskIdx = idx;
+        return task;
       }
+      smallestTaskIdx = idx;
       return task;
     }, available[0]);
     //console.log(`available length: ${available.length}`);
 
-    console.log(
-      `picking up ${smallestTask.idx} at time ${t}. Task start ${smallestTask.start}`
-    );
-    const toDelete = available.indexOf(smallestTask);
-    //console.log(`deleting index: ${toDelete}`);
-    available.splice(toDelete, 1);
+    available.splice(smallestTaskIdx, 1);
     result.push(smallestTask.idx);
     t = t + smallestTask.duration;
     //console.log(`done with task ${smallestTask.idx}, time: ${t}`);
