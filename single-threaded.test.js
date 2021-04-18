@@ -1,3 +1,36 @@
+function SmallestTasks() {
+  const tasks = [];
+
+  this.getSize = () => {
+    return tasks.length;
+  };
+
+  this.add = (task) => {
+    tasks.push(task);
+  };
+
+  this.getSmallest = () => {
+    let smallestTaskIdx = 0;
+    const smallestTask = tasks.reduce((acc, task, idx) => {
+      if (acc.duration < task.duration) {
+        return acc;
+      }
+      if (acc.duration === task.duration) {
+        if (acc.idx < task.idx) {
+          return acc;
+        }
+        smallestTaskIdx = idx;
+        return task;
+      }
+      smallestTaskIdx = idx;
+      return task;
+    }, tasks[0]);
+    tasks.splice(smallestTaskIdx, 1);
+    return smallestTask;
+    //console.log(`available length: ${available.length}`);
+  };
+}
+
 const getResult = (tasks, t, result = []) => {
   const sortedTasks = tasks
     .map((n, i) => {
@@ -11,33 +44,21 @@ const getResult = (tasks, t, result = []) => {
       return a.start - b.start;
     });
 
-  let available = [];
+  let available = new SmallestTasks();
   while (result.length !== tasks.length) {
-    if (sortedTasks.length && !available.length && t < sortedTasks[0].start) {
+    if (
+      sortedTasks.length &&
+      !available.getSize() &&
+      t < sortedTasks[0].start
+    ) {
       t = sortedTasks[0].start;
     }
     while (sortedTasks.length && sortedTasks[0].start <= t) {
-      available.push(sortedTasks.shift());
+      available.add(sortedTasks.shift());
     }
 
-    let smallestTaskIdx = 0;
-    const smallestTask = available.reduce((acc, task, idx) => {
-      if (acc.duration < task.duration) {
-        return acc;
-      }
-      if (acc.duration === task.duration) {
-        if (acc.idx < task.idx) {
-          return acc;
-        }
-        smallestTaskIdx = idx;
-        return task;
-      }
-      smallestTaskIdx = idx;
-      return task;
-    }, available[0]);
-    //console.log(`available length: ${available.length}`);
+    const smallestTask = available.getSmallest();
 
-    available.splice(smallestTaskIdx, 1);
     result.push(smallestTask.idx);
     t = t + smallestTask.duration;
     //console.log(`done with task ${smallestTask.idx}, time: ${t}`);
