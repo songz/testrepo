@@ -11,13 +11,19 @@ function Heap(tasks) {
       return a.start - b.start;
     });
 
+  console.log(sortedTasks);
+
   this.getAvailable = (time, result = [], i = 0) => {
-    if (i === 0 && time < sortedTasks[i].start) {
+    if (
+      i === 0 &&
+      sortedTasks.length &&
+      !result.length &&
+      time < sortedTasks[0].start
+    ) {
       time = sortedTasks[i].start;
     }
-    while (!(i >= sortedTasks.length || time < sortedTasks[i].start)) {
-      result.push(sortedTasks[i]);
-      i = i + 1;
+    while (sortedTasks.length && sortedTasks[0].start <= time) {
+      result.push(sortedTasks.shift());
     }
     return { result, time };
   };
@@ -29,9 +35,9 @@ function Heap(tasks) {
 }
 
 const getResult = (tasks, h, t, result = []) => {
+  let available = [];
   while (result.length !== tasks.length) {
-    const availableResults = h.getAvailable(t);
-    const available = availableResults.result;
+    const availableResults = h.getAvailable(t, available);
     t = availableResults.time;
     const smallestTask = available.reduce((acc, task) => {
       if (acc.duration < task.duration) {
@@ -42,10 +48,17 @@ const getResult = (tasks, h, t, result = []) => {
       }
       return task;
     }, available[0]);
-    console.log(`available length: ${available.length}`);
+    //console.log(`available length: ${available.length}`);
+
+    console.log(
+      `picking up ${smallestTask.idx} at time ${t}. Task start ${smallestTask.start}`
+    );
+    const toDelete = available.indexOf(smallestTask);
+    //console.log(`deleting index: ${toDelete}`);
+    available.splice(toDelete, 1);
     result.push(smallestTask.idx);
-    h.delete(smallestTask);
     t = t + smallestTask.duration;
+    //console.log(`done with task ${smallestTask.idx}, time: ${t}`);
   }
   return result;
 };
@@ -54,6 +67,28 @@ const getOrder = function (tasks, result = []) {
   const h = new Heap(tasks);
   return getResult(tasks, h, 0);
 };
+
+test("loooongeinput", () => {
+  const r = getOrder([
+    [35, 36],
+    [11, 7],
+    [15, 47],
+    [34, 2],
+    [47, 19],
+    [16, 14],
+    [19, 8],
+    [7, 34],
+    [38, 15],
+    [16, 18],
+    [27, 22],
+    [7, 15],
+    [43, 2],
+    [10, 5],
+    [5, 4],
+    [3, 11],
+  ]);
+  expect(r).toEqual([15, 14, 13, 1, 6, 3, 5, 12, 8, 11, 9, 4, 10, 7, 0, 2]);
+});
 
 test("[[19,13],[16,9],[21,10],[32,25],[37,4],[49,24],[2,15],[38,41],[37,34],[33,6],[45,4],[18,18],[46,39],[12,24]]", () => {
   const r = getOrder([
