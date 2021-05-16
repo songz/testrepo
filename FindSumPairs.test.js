@@ -8,6 +8,11 @@ var FindSumPairs = function (nums1, nums2) {
     return acc;
   }, {});
 
+  this.map2 = nums2.reduce((acc, num) => {
+    acc[num] = (acc[num] || 0) + 1;
+    return acc;
+  }, {});
+
   this.nums2 = nums2;
 };
 
@@ -17,7 +22,16 @@ var FindSumPairs = function (nums1, nums2) {
  * @return {void}
  */
 FindSumPairs.prototype.add = function (index, val) {
-  this.nums2[index] += val;
+  const orig = this.nums2[index];
+  const newVal = orig + val;
+  this.nums2[index] = newVal;
+
+  this.map2[orig] -= 1;
+  if (this.map2[orig] < 1) {
+    delete this.map2[orig];
+  }
+
+  this.map2[newVal] = (this.map2[newVal] || 0) + 1;
 };
 
 /**
@@ -25,13 +39,13 @@ FindSumPairs.prototype.add = function (index, val) {
  * @return {number}
  */
 FindSumPairs.prototype.count = function (tot) {
-  return this.nums2.reduce((acc, num) => {
-    const other = this.map[tot - num];
+  return Object.keys(this.map).reduce((acc, num) => {
+    const other = this.map2[tot - num];
     if (!other) {
       return acc;
     }
 
-    return acc + other;
+    return acc + other * this.map[num];
   }, 0);
 };
 
