@@ -1,84 +1,105 @@
-function Heap(compare) {
-  const state = [];
-
-  const parent = (e) => {
-    return Math.floor((e - 1) / 2);
-  };
-
-  const leftChild = (i) => {
-    return 2 * i + 1;
-  };
-
-  const rightChild = (i) => {
-    return leftChild(i) + 1;
-  };
-
-  this.add = function (element) {
-    state.push(element);
-    if (state.length === 1) {
-      return;
-    }
-    let i = state.length - 1;
-    while (i > 0 && compare(state[parent(i)], state[i])) {
-      [state[i], state[parent(i)]] = [state[parent(i)], state[i]];
-      i = parent(i);
-    }
-  };
-
-  this.getSize = () => {
-    return state.length;
-  };
-
-  this.getSmallest = () => {
-    if (!state.length) return null;
-    if (state.length === 1) {
-      return state.pop();
-    }
-    const result = state[0];
-    state[0] = state[state.length - 1];
-    state.pop();
-    let i = 0;
-    while (
-      (leftChild(i) < state.length && compare(state[i], state[leftChild(i)])) ||
-      (rightChild(i) < state.length && compare(state[i], state[rightChild(i)]))
-    ) {
-      if (
-        rightChild(i) < state.length &&
-        compare(state[i], state[rightChild(i)]) &&
-        compare(state[leftChild(i)], state[rightChild(i)])
-      ) {
-        [state[i], state[rightChild(i)]] = [state[rightChild(i)], state[i]];
-        i = rightChild(i);
-      } else {
-        [state[i], state[leftChild(i)]] = [state[leftChild(i)], state[i]];
-        i = leftChild(i);
-      }
-    }
-    return result;
-  };
+function length(left, right) {
+    return right - left + 1;
 }
 
-var minInterval = function (intervals, queries) {
-  const sorted = intervals.sort((a, b) => a[0] - b[0]);
-  const iMap = sorted.reduce((acc, [s, e], i) => {
-    acc[i] = e - s + 1;
-    return acc;
-  }, {});
-
-  const getMinInterval = (num) => {
-    let max = -1;
-    for (let i = 0; i < intervals.length && intervals[i][0] <= num; i++) {
-      if (intervals[i][1] >= num) {
-        if (max === -1 || iMap[i] < max) {
-          max = iMap[i];
+function minInterval(intervals, queries) {
+    intervals = intervals.sort((a, b) => a[0] - b[0]);
+    const indexedQueries = queries.map((query, index) => ({ query, index })).sort((a, b) => a.query - b.query);
+    const heap = new Heap((left, right) => length(right) < length(left));
+    const results = queries.map(() => -1);
+    let i = 0;
+    for (const { query, index } of indexedQueries) {
+        while (i < intervals.length && intervals[i][0] <= query) {
+            heap.push(intervals[i]);
+            i += 1;
         }
-      }
+        while (heap.length > 0 && heap.top[1] < query) {
+            heap.pop();
+        }
+        if (heap.length > 0) {
+            results[index] = length(heap.top);
+        }
     }
-    return max;
-  };
+    return results;
+}
 
-  return queries.map((q) => getMinInterval(q));
-};
+function Heap(isRightHigherPriority) {
+  const parent = (i) => {
+    return Math.floor( (i - 1) / 2 )
+  }
+  let state = []
+  this.push = (e) => {
+    state.push(e)
+    if (state.length === 1) {
+      return
+    }
+
+    let i = state.length - 1
+    while( i > 0 && isRightHigherPriority(state[parent(i)], state[i])) {
+      const parentI = parent(i)
+      [state[i], state[parentI]] = [state[parentI], state[i]]
+      i = parentI
+    }
+  }
+
+  this.pop = () => {
+    if (!state.length) return null;
+    if (state.length === 1) {
+      return state.pop()
+    }
+  }
+}
+
+class Heap {
+
+    pop(): T | null {
+        if (this.state.length === 0) return null;
+        if (this.state.length === 1) return this.state.pop()!;
+        const result = this.state[0];
+        this.state[0] = this.state[this.state.length - 1];
+        this.state.pop();
+        let i = 0;
+        while (
+            (leftChild(i) < this.state.length &&
+                this.isRightHigherPriority(this.state[i], this.state[leftChild(i)])) ||
+            (rightChild(i) < this.state.length &&
+                this.isRightHigherPriority(this.state[i], this.state[rightChild(i)]))
+        ) {
+            if (
+                rightChild(i) < this.state.length &&
+                this.isRightHigherPriority(this.state[i], this.state[rightChild(i)]) &&
+                this.isRightHigherPriority(this.state[leftChild(i)], this.state[rightChild(i)])
+            ) {
+                [this.state[i], this.state[rightChild(i)]] = [
+                    this.state[rightChild(i)],
+                    this.state[i],
+                ];
+                i = rightChild(i);
+            } else {
+                [this.state[i], this.state[leftChild(i)]] = [
+                    this.state[leftChild(i)],
+                    this.state[i],
+                ];
+                i = leftChild(i);
+            }
+        }
+        return result;
+        function leftChild(i: number): number {
+            return i * 2 + 1;
+        }
+        function rightChild(i: number): number {
+            return leftChild(i) + 1;
+        }
+    }
+
+    get length(): number {
+        return this.state.length;
+    }
+    
+    get top(): T {
+        return this.state[0];
+    }
+}
 
 test("[[1,4],[2,4],[3,6],[4,4]], queries = [2,3,4,5]", () => {
   const r = minInterval(
@@ -104,4 +125,4 @@ test("[[2,3],[2,5],[1,8],[20,25]], queries = [2,19,5,22]", () => {
     [2, 19, 5, 22]
   );
   expect(r).toEqual([2, -1, 4, 6]);
-});
+
