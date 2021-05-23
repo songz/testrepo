@@ -1,24 +1,22 @@
-const big = BigInt(1e9 + 7);
-
-const countArrangements = (n, k, map = {}) => {
-  if (k === 0 || k > n) return BigInt(0);
-  if (n <= 2) return BigInt(1);
-  const key = `${n},${k}`;
-  if (map[key]) {
-    return map[key];
-  }
-
-  const result =
-    BigInt(n - 1) * BigInt(countArrangements(n - 1, k, map)) +
-    BigInt(countArrangements(n - 1, k - 1, map));
-
-  map[key] = result;
-
-  return BigInt(result);
-};
-
 const rearrangeSticks = function (n, k) {
-  return Number(countArrangements(n, k) % big);
+  const countArrangements = (n, k, map = {}) => {
+    if (k === 0 || k > n) return 0n;
+    if (n <= 2) return 1n;
+    const key = `${n},${k}`;
+    if (map[key]) {
+      return map[key];
+    }
+
+    const result =
+      BigInt(n - 1) * countArrangements(n - 1, k, map) +
+      countArrangements(n - 1, k - 1, map);
+
+    map[key] = result;
+
+    return BigInt(result);
+  };
+
+  return Number(countArrangements(n, k) % 1_000_000_007n);
 };
 
 test("3,2", () => {

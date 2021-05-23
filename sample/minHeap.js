@@ -1,30 +1,3 @@
-function length([left, right]) {
-  return right - left + 1;
-}
-
-function minInterval(intervals, queries) {
-  intervals = intervals.sort((a, b) => a[0] - b[0]);
-  const indexedQueries = queries
-    .map((query, index) => ({ query, index }))
-    .sort((a, b) => a.query - b.query);
-  const heap = new Heap((left, right) => length(right) < length(left));
-  const results = queries.map(() => -1);
-  let i = 0;
-  indexedQueries.forEach(({ query, index }) => {
-    while (i < intervals.length && intervals[i][0] <= query) {
-      heap.push(intervals[i]);
-      i += 1;
-    }
-    while (heap.length() > 0 && heap.top()[1] < query) {
-      heap.pop();
-    }
-    if (heap.length() > 0) {
-      results[index] = length(heap.top());
-    }
-  });
-  return results;
-}
-
 function Heap(isRightHigherPriority) {
   const parent = (i) => {
     return Math.floor((i - 1) / 2);
@@ -93,29 +66,3 @@ function Heap(isRightHigherPriority) {
     return state[0];
   };
 }
-
-test("[[1,4],[2,4],[3,6],[4,4]], queries = [2,3,4,5]", () => {
-  const r = minInterval(
-    [
-      [1, 4],
-      [2, 4],
-      [3, 6],
-      [4, 4],
-    ],
-    [2, 3, 4, 5]
-  );
-  expect(r).toEqual([3, 3, 1, 4]);
-});
-
-test("[[2,3],[2,5],[1,8],[20,25]], queries = [2,19,5,22]", () => {
-  const r = minInterval(
-    [
-      [2, 3],
-      [2, 5],
-      [1, 8],
-      [20, 25],
-    ],
-    [2, 19, 5, 22]
-  );
-  expect(r).toEqual([2, -1, 4, 6]);
-});
