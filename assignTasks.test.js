@@ -81,50 +81,46 @@ const assignTasks = (servers, tasks) => {
     });
   });
 
-  const processingHeap = new Heap((a, b) => {
-    return a.endTime > b.endTime;
+  const busyServers = new Heap((a, b) => {
+    if (a.endTime !== b.endTime) {
+      return a.endTime > b.endTime;
+    }
+    if (a.weight !== b.weight) {
+      return a.weight > b.weight;
+    }
+    return a.idx > b.idx;
   });
 
   const result = [];
-  const startingServer = serverHeap.pop();
-  processingHeap.push({
-    serverIdx: startingServer.idx,
-    endTime: tasks[0],
-  });
-  result.push(startingServer.idx);
 
-  let i = 1;
-  let timePassed = 0;
-  while (i < tasks.length) {
-    //console.group();
-    //console.log(`i is ${i}`);
-    while (
-      processingHeap.length() &&
-      processingHeap.top().endTime <= i + timePassed
-    ) {
-      const freedServer = processingHeap.pop();
+  for (let i = 0; i < tasks.length; i++) {
+    while (busyServers.length() && busyServers.top().endTime <= i) {
+      const freedServer = busyServers.pop();
       serverHeap.push({
-        idx: freedServer.serverIdx,
-        weight: servers[freedServer.serverIdx],
+        idx: freedServer.idx,
+        weight: freedServer.weight,
       });
-      //console.log(`${i}: freeing server ${freedServer.serverIdx}`);
     }
 
-    if (serverHeap.length()) {
-      const smallestServer = serverHeap.pop();
-      processingHeap.push({
-        serverIdx: smallestServer.idx,
-        endTime: i + timePassed + tasks[i],
+    if (!serverHeap.length()) {
+      const freedServer = busyServers.pop();
+      busyServers.push({
+        idx: freedServer.idx,
+        weight: freedServer.weight,
+        endTime: tasks[i] + freedServer.endTime,
       });
-      //console.log(`${i}: using server ${smallestServer.idx}`, smallestServer);
-      result.push(smallestServer.idx);
-      i += 1;
+      result.push(freedServer.idx);
     } else {
-      timePassed += 1;
+      const server = serverHeap.pop();
+      result.push(server.idx);
+
+      busyServers.push({
+        idx: server.idx,
+        weight: server.weight,
+        endTime: tasks[i] + i,
+      });
     }
   }
-
-  console.log(result);
   return result;
 };
 
