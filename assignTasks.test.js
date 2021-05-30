@@ -91,9 +91,7 @@ const assignTasks = (servers, tasks) => {
     return a.idx > b.idx;
   });
 
-  const result = [];
-
-  for (let i = 0; i < tasks.length; i++) {
+  return tasks.map((taskDuration, i) => {
     while (busyServers.length() && busyServers.top().endTime <= i) {
       const freedServer = busyServers.pop();
       serverHeap.push({
@@ -107,21 +105,19 @@ const assignTasks = (servers, tasks) => {
       busyServers.push({
         idx: freedServer.idx,
         weight: freedServer.weight,
-        endTime: tasks[i] + freedServer.endTime,
+        endTime: taskDuration + freedServer.endTime,
       });
-      result.push(freedServer.idx);
-    } else {
-      const server = serverHeap.pop();
-      result.push(server.idx);
-
-      busyServers.push({
-        idx: server.idx,
-        weight: server.weight,
-        endTime: tasks[i] + i,
-      });
+      return freedServer.idx;
     }
-  }
-  return result;
+    const server = serverHeap.pop();
+
+    busyServers.push({
+      idx: server.idx,
+      weight: server.weight,
+      endTime: taskDuration + i,
+    });
+    return server.idx;
+  });
 };
 
 test("servers = [3,3,2], tasks = [1,2,3,2,1,2]", () => {
