@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>L33T_C0D3</title>
+</head>
+<body>
+  
+  <h1>Leet code solutions</h1>
+
+  <p>Type functionName.test.js</p>
+
+  <p>For Example,</p>
+  <p>
+  <a href="/minInterval.test.js" target="_blank">minInterval.test.js</a>
+  for 
+<a href="https://leetcode.com/contest/weekly-contest-239/problems/minimum-interval-to-include-each-query/">1851: Minimum Interval to Include Each Query</a> Leetcode problem
+  </p>
+  <hr>
+  <div id="contestList">
+  </div>
+
+
+  <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css">
+
+  <script>
+    const contestList = [{
+          name: "Weekly 249",
+          url: "https://leetcode.com/contest/weekly-contest-249/",
+          problems: [{
+                title: "1929. Concatenation of Array",
+                url: "https://leetcode.com/contest/weekly-contest-249/problems/concatenation-of-array/",
+                method: ""
+              },{
+                title: "1930. Unique Length-3 Palindromic Subsequences",
+                url: "https://leetcode.com/contest/weekly-contest-249/problems/unique-length-3-palindromic-subsequences/",
+                method: "countPalindromicSubsequence"
+              }, {
+                title: "1411. Number of Ways to Paint N × 3 Grid",
+                url: "https://leetcode.com/problems/number-of-ways-to-paint-n-3-grid/",
+                method: "numOfWays"
+              }]
+        },{
+          name: "Weekly 237",
+          url: "https://leetcode.com/discuss/general-discussion/1163970/weekly-contest-237",
+          problems: [{
+                title: "1832. Check if the Sentence Is Pangram",
+                url: "https://leetcode.com/contest/weekly-contest-237/problems/check-if-the-sentence-is-pangram/",
+                method: ""
+              },{
+                title: "1833. Maximum Ice Cream Bars",
+                url: "https://leetcode.com/problems/maximum-ice-cream-bars/",
+                method: "maxIceCream"
+              }]
+        }]
+
+        document.querySelector('#contestList').innerHTML = contestList.reduce((acc, contest) => {
+              const problemStr = contest.problems.reduce((probAcc, problem) => {
+                    const des = problem.method 
+                      ? 
+                      `<a href="/${problem.method}.test.js" target="_blank">${problem.method}.test.js</a>`
+                      : "Too Easy"
+                    return probAcc + `
+        <li>
+   <a href="${problem.url}" target="_blank">${problem.title}</a> : 
+   ${des}
+        </li>
+
+   `
+                  }, '')
+              return acc + `
+   <div>
+   <h1>
+   <a href="${contest.url}"> 
+${contest.name}
+   </a>
+   </h1> 
+      <ul>
+   ${problemStr}
+      </ul>
+   </div>
+   `
+            }, '')
+  </script>
+</body>
+</html>
