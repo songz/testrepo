@@ -1,26 +1,28 @@
-// https://leetcode.com/problems/number-of-ways-to-paint-n-3-grid/discuss/574912/JavaC%2B%2B-DFS-Memoization-with-Picture-Clean-code
-
 const colors = [1, 2, 3];
 
-// a0, b0, c0 stands for previous row.
-const dfs = (n, a0, b0, c0, dp) => {
+// n is how many rows left to go
+// c is the color array for established row
+const dfs = (n, c, map) => {
+  // n = 0 should give 1
   if (!n) {
     return 1n;
   }
 
-  if (dp[n][a0][b0][c0]) {
-    return dp[n][a0][b0][c0];
+  // If we have visited this combination before, just continue
+  const key = `${n}-${c[0]}-${c[1]}-${c[2]}`;
+  if (map[key]) {
+    return map[key];
   }
 
   let ans = 0n;
 
   colors.forEach((c1) => {
-    if (c1 !== a0) {
+    if (c1 !== c[0]) {
       colors.forEach((c2) => {
-        if (c2 !== b0 && c2 !== c1) {
+        if (c2 !== c[1] && c2 !== c1) {
           colors.forEach((c3) => {
-            if (c3 !== c0 && c3 !== c2) {
-              ans += dfs(n - 1, c1, c2, c3, dp);
+            if (c3 !== c[2] && c3 !== c2) {
+              ans += dfs(n - 1, [c1, c2, c3], map);
               ans %= 1000_000_007n;
             }
           });
@@ -29,41 +31,13 @@ const dfs = (n, a0, b0, c0, dp) => {
     }
   });
 
-  dp[n][a0][b0][c0] = ans;
+  map[key] = ans;
   return ans;
 };
 
 var numOfWays = function (n) {
-  const dp = [...Array(n + 1)].map((a) => {
-    return [
-      [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-      ],
-      [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-      ],
-      [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-      ],
-      [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-      ],
-    ];
-  });
-
-  return parseInt(dfs(n, 0, 0, 0, dp));
+  // start with n rows with nonexisting colors on row 0
+  return parseInt(dfs(n, [0, 0, 0], {}));
 };
 
 test("1", () => {
