@@ -15,32 +15,29 @@ const { makeBst, unmakeBst } = require("./lib/bst");
 var isValidBST = function (root) {
   if (!root) return true;
 
-  let valid = true;
-  let lastNum = -Infinity;
-
-  const checkValid = (nextNumber) => {
-    // To check the order you are traversing, uncomment console.log
-    //console.log(nextNumber);
-    if (nextNumber <= lastNum) {
-      valid = false;
-    }
-    lastNum = nextNumber;
-  };
-
-  const dfs = (node) => {
-    if (!node) {
-      return;
-    }
+  const arr = [];
+  const buildArr = (node) => {
     if (!node.left && !node.right) {
-      checkValid(node.val);
+      arr.push(node.val);
       return node.val;
     }
-    dfs(node.left);
-    checkValid(node.val);
-    dfs(node.right);
+    node.left && buildArr(node.left);
+    arr.push(node.val);
+    node.right && buildArr(node.right);
   };
-  dfs(root);
-  return valid;
+  buildArr(root);
+
+  // console.log(arr) // arr should be sorted
+
+  return arr.reduce((acc, num, i) => {
+    if (i === 0) {
+      return acc;
+    }
+    if (arr[i - 1] >= num) {
+      return false;
+    }
+    return acc;
+  }, true);
 };
 
 test("[5,1,4,null,null,3,6]", () => {

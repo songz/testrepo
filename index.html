@@ -17,6 +17,14 @@
 <a href="https://leetcode.com/contest/weekly-contest-239/problems/minimum-interval-to-include-each-query/">1851: Minimum Interval to Include Each Query</a> Leetcode problem
   </p>
   <hr>
+  <hr>
+  <h1>Lib</h1>
+  <ul>
+    <li>
+      <a href="/lib/bst.js" target="_blank">bst.js</a>: exports makeBst and and unmakeBst to convert from array to Binary Search Tree and vice versa. 
+      <a href="/lib/bst.test.js" target="_blank">corresponding test file for the library</a>
+    </li>
+  </ul>
   <div id="contestList">
   </div>
 
@@ -28,6 +36,11 @@
     const contestList = [{
           name: "Weekly 249",
           url: "https://leetcode.com/contest/weekly-contest-249/",
+          descriptions: [
+                "Problem 3 was difficult to understand. First practice Nx3 grid problem, then try to solve the challenge problem yourself",
+                "Problem 4 was also difficult to understand. First practice Validate Binary Search Tree, then try to solve the challenge problem yourself",
+                "To help converting input from array to binary search tree (problem 4), you need the lib code (link in the lib section)"
+              ],
           problems: [{
                 title: "1929. Concatenation of Array",
                 url: "https://leetcode.com/contest/weekly-contest-249/problems/concatenation-of-array/",
@@ -37,9 +50,21 @@
                 url: "https://leetcode.com/contest/weekly-contest-249/problems/unique-length-3-palindromic-subsequences/",
                 method: "countPalindromicSubsequence"
               }, {
-                title: "1411. Number of Ways to Paint N × 3 Grid",
+                title: "(Practice for Problem 3) 1411. Number of Ways to Paint N × 3 Grid",
                 url: "https://leetcode.com/problems/number-of-ways-to-paint-n-3-grid/",
                 method: "numOfWays"
+              }, {
+                title: "(Problem 3) 1931. Painting a Grid With Three Different Colors",
+                url: "https://leetcode.com/problems/painting-a-grid-with-three-different-colors/",
+                method: "colorTheGrid"
+              }, {
+                title: "(Practice for Problem 4) 98. Validate Binary Search Tree",
+                url: "https://leetcode.com/problems/validate-binary-search-tree/",
+                method: "isValidBST"
+              }, {
+                title: "(Problem 4) 1932. Merge BSTs to Create Single BST",
+                url: "https://leetcode.com/problems/merge-bsts-to-create-single-bst/",
+                method: "canMerge"
               }]
         },{
           name: "Weekly 237",
@@ -69,6 +94,12 @@
 
    `
                   }, '')
+
+              const descriptions = (contest.descriptions || []).reduce((descAcc, desc) => {
+                    return descAcc + `
+   <p>${desc}</p>
+   `
+                  }, '')
               return acc + `
    <div>
    <h1>
@@ -76,9 +107,11 @@
 ${contest.name}
    </a>
    </h1> 
+   ${descriptions}
       <ul>
    ${problemStr}
       </ul>
+   <hr>
    </div>
    `
             }, '')
