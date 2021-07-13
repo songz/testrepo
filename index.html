@@ -28,6 +28,16 @@
   <div id="contestList">
   </div>
 
+  <div>
+    <h1>Other Problems</h1>
+    <ul>
+        <li>
+   <a href="https://leetcode.com/problems/maximum-distance-between-a-pair-of-values/" target="_blank">1855. Maximum Distance Between a Pair of Values</a> : 
+  <a href="/largestRectangleArea.test.js" target="_blank">maxDistance.test.js</a>
+        </li>
+    </ul>
+  </div>
+
 
   <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css">
@@ -44,13 +54,13 @@
           problems: [{
                 title: "1929. Concatenation of Array",
                 url: "https://leetcode.com/contest/weekly-contest-249/problems/concatenation-of-array/",
-                method: ""
+                method: "getContenation"
               },{
                 title: "1930. Unique Length-3 Palindromic Subsequences",
                 url: "https://leetcode.com/contest/weekly-contest-249/problems/unique-length-3-palindromic-subsequences/",
                 method: "countPalindromicSubsequence"
               }, {
-                title: "(Practice for Problem 3) 1411. Number of Ways to Paint N × 3 Grid",
+                title: "(Prereq for Problem 3) 1411. Number of Ways to Paint N × 3 Grid",
                 url: "https://leetcode.com/problems/number-of-ways-to-paint-n-3-grid/",
                 method: "numOfWays"
               }, {
@@ -58,7 +68,7 @@
                 url: "https://leetcode.com/problems/painting-a-grid-with-three-different-colors/",
                 method: "colorTheGrid"
               }, {
-                title: "(Practice for Problem 4) 98. Validate Binary Search Tree",
+                title: "(Prereq for Problem 4) 98. Validate Binary Search Tree",
                 url: "https://leetcode.com/problems/validate-binary-search-tree/",
                 method: "isValidBST"
               }, {
@@ -149,16 +159,23 @@
         },{
           name: "Weekly 240",
           url: "https://leetcode.com/discuss/general-discussion/1198637/weekly-contest-240",
+          descriptions: [
+                "Problem 3 was difficult to understand. First practice Largest Rectangle In Histogram",
+              ],
           problems: [{
                 title: "1854. Maximum Population Year",
                 url: "https://leetcode.com/problems/maximum-population-year/",
                 method: "maximumPopulation"
               },{
-                title: "1849. Splitting a String Into Descending Consecutive Values",
+                title: "1855. Maximum Distance Between a Pair of Values",
                 url: "https://leetcode.com/problems/maximum-distance-between-a-pair-of-values/",
-                method: "minSpeedOnTime"
+                method: "maxDistance"
               },{
-                title: "1856. Maximum Subarray Min-Product",
+                title: "(Prereq Problem 3) 84. Largest Rectangle in Histogram",
+                url: "https://leetcode.com/problems/largest-rectangle-in-histogram/",
+                method: "largestRectangleArea"
+              },{
+                title: "(Problem 3) 1856. Maximum Subarray Min-Product",
                 url: "https://leetcode.com/problems/maximum-subarray-min-product/",
                 method: "maxSumMinProduct"
               },{
@@ -169,6 +186,9 @@
         },{
           name: "Weekly 239",
           url: "https://leetcode.com/discuss/general-discussion/1186784/weekly-contest-239",
+              descriptions: [
+                "Problem 3 is a combination of 2 problems. To make understanding easier, solve Next Permutation first."
+                    ],
           problems: [{
                 title: "1848. Minimum Distance to the Target Element",
                 url: "https://leetcode.com/problems/minimum-distance-to-the-target-element/",
@@ -178,7 +198,11 @@
                 url: "https://leetcode.com/problems/splitting-a-string-into-descending-consecutive-values/",
                 method: "splitString"
               },{
-                title: "1850. Minimum Adjacent Swaps to Reach the Kth Smallest Number",
+                title: "(Prereq Problem 3) 31. Next Permutation",
+                url: "https://leetcode.com/problems/next-permutation/",
+                method: "nextPermutation"
+              },{
+                title: "(Problem 3) 1850. Minimum Adjacent Swaps to Reach the Kth Smallest Number",
                 url: "https://leetcode.com/problems/minimum-adjacent-swaps-to-reach-the-kth-smallest-number/",
                 method: "getMinSwaps"
               },{
